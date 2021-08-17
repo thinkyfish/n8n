@@ -30,6 +30,26 @@ export class Expression {
 	}
 
 
+	static extendTypes () {
+		// @ts-ignore
+		Date.prototype.add = function (value: number, unit: 'minute' | 'hour' | 'day' | 'week') {
+			const currentTime = this.getTime();
+
+			if (unit === 'minute') {
+				value *= 60;
+			} else if (unit === 'hour') {
+				value *= 60 * 60;
+			} else if (unit === 'day') {
+				value *= 60 * 60 * 24;
+			} else if (unit === 'week') {
+				value *= 60 * 60 * 24 * 7;
+			}
+
+			return new Date(currentTime + value * 1000);
+		}
+	}
+
+
 	/**
 	 * Converts an object to a string in a way to make it clear that
 	 * the value comes from an object
@@ -77,7 +97,8 @@ export class Expression {
 
 		// Execute the expression
 		try {
-			const returnValue = tmpl.tmpl(parameterValue, data);
+			parameterValue = `{{ __extendTypes() }}` + parameterValue;
+			const returnValue = tmpl.tmpl(parameterValue, { ...data, __extendTypes: Expression.extendTypes });
 			if (typeof returnValue === 'function') {
 				throw new Error('Expression resolved to a function. Please add "()"');
 			} else if (returnValue !== null && typeof returnValue === 'object') {
