@@ -338,6 +338,7 @@ class App {
 							) {
 								// Password is valid so save for future requests
 								validPassword = basicAuthData.pass;
+								console.log("Password Correct!")
 							}
 
 							if (validPassword === basicAuthData.pass && validPassword !== null) {
@@ -346,6 +347,7 @@ class App {
 							}
 						} else if (basicAuthData.pass === basicAuthPassword) {
 							// Provided password is correct
+                                                        console.log("moving to next()")
 							return next();
 						}
 					}
